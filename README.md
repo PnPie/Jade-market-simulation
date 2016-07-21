@@ -4,7 +4,7 @@ A JADE multi-agent simulation program of an electricity transmission network, to
 ## Description of the system
 
 There are 3 kinds of agent in the simulation system:
-- Fournisseur agent
+- Supplier agent
 - Consommateur agent
 - Observateur agent
 The Observateur agent is just to provide an interface to observe the real-time status of each supplier.
@@ -18,7 +18,7 @@ The supplier can be smarter and it can change its price intelligently according 
 Every time a consommateur is generated, it searches the lowest price provided by suppliers in the market, then subscribe to it. The client repeat this process monthly to find the cheapest supplier.
 The client sends the consumed electricity to his supplier every day.
 
-## Fournisseur agent
+## Supplier agent
 Every time when there is a client asking for the price, he will response to it and if the client wants to subscribe to him, he will then decide whether to use the public transport or to construct a private one.
 The supplier sends a bill to each of his clients every day.
 

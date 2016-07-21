@@ -43,7 +43,7 @@ public class Observateur extends Agent {
 			DFService.register(this, dfd);
 			DFAgentDescription templatedfd = new DFAgentDescription();
 			ServiceDescription templatesd = new ServiceDescription();
-			templatesd.setType("Fournisseur");
+			templatesd.setType("Supplier");
 			templatedfd.addServices(templatesd);
 			// Searching for agents match the DF Description template
 			resTab = DFService.search(this, templatedfd);

@@ -46,7 +46,7 @@ public class Consommateur extends Agent {
 			// Create a DF Description template
 			DFAgentDescription templatedfd = new DFAgentDescription();
 			ServiceDescription templatesd = new ServiceDescription();
-			templatesd.setType("Fournisseur");
+			templatesd.setType("Supplier");
 			templatedfd.addServices(templatesd);
 			
 			// Searching for agents matching the DF Description template
