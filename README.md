@@ -1,4 +1,4 @@
-# Smart-grid
+# Smart-Grid
 A JADE multi-agent electricity transmission system, to observe the market evolution according to real-time dynamic behaviour of suppliers clients.
 
 ## Description of the system
