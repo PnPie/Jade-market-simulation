@@ -20,8 +20,9 @@ public class Supplier extends Agent {
     private int otherCost;
     private int privateLineNumber;
     private int privateLineNumberInUse;
-    private Map<AID, Integer> clientTransport = new HashMap<>();
-    private Map<AID, Integer> clientPrivateLine = new HashMap<>();
+    private Map<AID, Integer> clientTransport = new HashMap<AID, Integer>();
+    private Map<AID, Integer> clientPrivateLine = new HashMap<AID, Integer>();
+
 
     /**
      * invoked when an agent starts

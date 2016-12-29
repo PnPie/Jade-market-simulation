@@ -1,21 +1,17 @@
-	import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.Vector;
 
 /**
  * An interface to show all the related information of every supplier
@@ -121,11 +117,11 @@ class ObservateurGUI extends JFrame {
 	
 	public ObservateurGUI() {
 		super("Observateur");
-		titleVector = new Vector<>();
+		titleVector = new Vector<String>();
 		for (int i = 0; i < title.length; i++) {
 			titleVector.add(title[i]);
 		}
-		dataVector = new Vector<>();
+		dataVector = new Vector<Vector<String>>();
 		for (int i = 0; i < nomFournisseur; i++) {
 			dataVector.add(new Vector<String>());
 		}
