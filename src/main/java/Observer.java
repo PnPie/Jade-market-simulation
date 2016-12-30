@@ -19,7 +19,7 @@ import java.util.Vector;
  * @author yu
  *
  */
-public class Observateur extends Agent {
+public class Observer extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	private static final int mois = 6000;
@@ -31,7 +31,7 @@ public class Observateur extends Agent {
 		DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription sd = new ServiceDescription();
-		sd.setType("Observateur");
+		sd.setType("Observer");
 		sd.setName(getName());
 		dfd.addServices(sd);
 		try {
@@ -116,7 +116,7 @@ class ObservateurGUI extends JFrame {
 	private Vector<Vector<String> > dataVector;
 	
 	public ObservateurGUI() {
-		super("Observateur");
+		super("Observer");
 		titleVector = new Vector<String>();
 		for (int i = 0; i < title.length; i++) {
 			titleVector.add(title[i]);

@@ -1,19 +1,17 @@
+import jade.core.AID;
+import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.FIPAException;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
+import util.Registration;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import jade.core.AID;
-import jade.core.Agent;
-import jade.core.behaviours.CyclicBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
-
 public class Supplier extends Agent {
-    private static final long serialVersionUID = 1L;
+
     private static final int privateLineCost = 240;
     private int electricityPrice = (int) Math.random() * 10 + 10;  // per kWh
     private int transportCost = 2;  // per kWh
@@ -28,17 +26,9 @@ public class Supplier extends Agent {
      * invoked when an agent starts
      */
     protected void setup() {
-        // Create DF(Directory Facilitator) Description for this agent
-        DFAgentDescription dfd = new DFAgentDescription();
-        dfd.setName(getAID());
-        ServiceDescription sd = new ServiceDescription();
-        sd.setType("Supplier");
-        sd.setName(getName());
-        dfd.addServices(sd);
         try {
-            // Register this agent in Directory Facilitator Service
-            DFService.register(this, dfd);
-            //System.out.println(getLocalName() + ": register in DF");
+            Registration.register(getAID(), "Supplier", getName(), this);
+
             addBehaviour(new WaitForSubscription(this));
             addBehaviour(new ReceiveConsumption(this));
             addBehaviour(new sentToObserver(this));
@@ -55,7 +45,7 @@ public class Supplier extends Agent {
      */
     protected void takeDown() {
         try {
-            DFService.deregister(this);
+            Registration.deregister(this);
         } catch (FIPAException exception) {
             exception.printStackTrace();
         }

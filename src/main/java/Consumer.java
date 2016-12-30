@@ -9,8 +9,9 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import util.Registration;
 
-public class Consommateur extends Agent {
+public class Consumer extends Agent {
 
 	private static final long serialVersionUID = 1L;
 	private static final int Jour = 2000;
@@ -29,28 +30,16 @@ public class Consommateur extends Agent {
 		countJour = 0;
 		KWhPerDay = (int)(Math.random() * 10 + 5);
 		fournisseurAID = new AID();
-		// Create DF(Directory Facilitator) Description object which lets other agents can find him
-		DFAgentDescription dfd = new DFAgentDescription();
-		dfd.setName(getAID());
-		ServiceDescription sd = new ServiceDescription();
-		sd.setType("Consommateur");
-		sd.setName(getName());
-		dfd.addServices(sd);
-		
 		try {
-			// Register this agent in DF Service
-			DFService.register(this, dfd);
-			//System.out.println(getLocalName() + ": register in DF.");
+			Registration.register(getAID(), "Consumer", getName(), this);
+
 			System.out.println(getLocalName() + ": searching for fournisseur.");
 			
 			// Create a DF Description template
-			DFAgentDescription templatedfd = new DFAgentDescription();
-			ServiceDescription templatesd = new ServiceDescription();
-			templatesd.setType("Supplier");
-			templatedfd.addServices(templatesd);
+			DFAgentDescription dfdTemplate = Registration.DFDTemplate("Supplier");
 			
 			// Searching for agents matching the DF Description template
-			fournisseursTab = DFService.search(this, templatedfd);
+			fournisseursTab = DFService.search(this, dfdTemplate);
 			
 			if (fournisseursTab != null && fournisseursTab.length > 0) {
 				//System.out.println(getLocalName() + ": Fournisseurs  found.");
@@ -71,7 +60,7 @@ public class Consommateur extends Agent {
 	 */
 	protected void takeDown() {
 		try {
-			DFService.deregister(this);
+		    Registration.deregister(this);
 		} catch (FIPAException e) {
 			e.printStackTrace();
 		}
