@@ -1,3 +1,5 @@
+package role;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
@@ -6,20 +8,18 @@ import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import util.Registration;
 
 public class Consumer extends Agent {
 
-	private static final long serialVersionUID = 1L;
 	private static final int Jour = 2000;
 	private static final int ChangementJour = 10;
-	private AID fournisseurAID;
+	private AID supplierAID;
 	private int KWhPerDay;
 	private int countJour;
-	private DFAgentDescription[] fournisseursTab;
+	private DFAgentDescription[] suppliersDFD;
 	
 	/*
 	 * invoked while an agent is created
@@ -29,21 +29,19 @@ public class Consumer extends Agent {
 	protected void setup() {
 		countJour = 0;
 		KWhPerDay = (int)(Math.random() * 10 + 5);
-		fournisseurAID = new AID();
+		supplierAID = new AID();
 		try {
 			Registration.register(getAID(), "Consumer", getName(), this);
 
-			System.out.println(getLocalName() + ": searching for fournisseur.");
-			
 			// Create a DF Description template
 			DFAgentDescription dfdTemplate = Registration.DFDTemplate("Supplier");
 			
 			// Searching for agents matching the DF Description template
-			fournisseursTab = DFService.search(this, dfdTemplate);
+			suppliersDFD = DFService.search(this, dfdTemplate);
 			
-			if (fournisseursTab != null && fournisseursTab.length > 0) {
+			if (suppliersDFD != null && suppliersDFD.length > 0) {
 				//System.out.println(getLocalName() + ": Fournisseurs  found.");
-				addBehaviour(new Subscribe(fournisseursTab));
+				addBehaviour(new Subscribe(suppliersDFD));
 				addBehaviour(new SendConsumption(this, Jour));
 				addBehaviour(new ReceivingBill());
 			}
@@ -54,7 +52,8 @@ public class Consumer extends Agent {
 	}
 	
 	/*
-	 * invoked just before an agent terminates and intended to include agent clean-up operations.
+	 * invoked just before an agent terminates and
+	 * intended to include agent clean-up operations.
 	 * 
 	 * @see jade.core.Agent#takeDown()
 	 */
@@ -75,7 +74,6 @@ public class Consumer extends Agent {
 	 */
 	private class Subscribe extends Behaviour {
 
-		private static final long serialVersionUID = 1L;
 		private int step = 0;
 		private int bestPrice;
 		private AID bestSupplier;
@@ -127,8 +125,8 @@ public class Consumer extends Agent {
 						replyCounts++;
 						if(replyCounts >= suppliers.length){
 							int i = (int) (Math.random() * suppliers.length);
-							fournisseurAID = suppliers[i].getName();
-							System.out.println(getLocalName() + ": subscribe to " + fournisseurAID.getLocalName());
+							supplierAID = suppliers[i].getName();
+							System.out.println(getLocalName() + ": subscribe to " + supplierAID.getLocalName());
 							step = 2;
 						}
 					}
@@ -141,7 +139,7 @@ public class Consumer extends Agent {
 				 * Tell the supplier how much electricity he consumes every day
 				 */
 				ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
-				order.addReceiver(fournisseurAID);
+				order.addReceiver(supplierAID);
 				order.setContent(Integer.toString(KWhPerDay));
 				order.setConversationId("sub");
 				myAgent.send(order);
@@ -180,21 +178,21 @@ public class Consumer extends Agent {
 
 		@Override
 		protected void onTick() {
-			if(fournisseurAID != null){
+			if(supplierAID != null){
 				int cons = KWhPerDay - 3 + (int)(Math.random() * 6);
 				ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 				msg.setContent(Integer.toString(cons));
 				msg.setConversationId("cons");
-				msg.addReceiver(fournisseurAID);
+				msg.addReceiver(supplierAID);
 				myAgent.send(msg);
 				countJour++;
 				if(countJour >= ChangementJour){
 					ACLMessage msgQuit = new ACLMessage(ACLMessage.CANCEL);
 					msgQuit.setConversationId("quit");
-					msgQuit.addReceiver(fournisseurAID);
+					msgQuit.addReceiver(supplierAID);
 					msgQuit.setReplyWith("Cancel" + System.currentTimeMillis());
 					myAgent.send(msgQuit);
-					myAgent.addBehaviour(new Subscribe(fournisseursTab));
+					myAgent.addBehaviour(new Subscribe(suppliersDFD));
 					countJour = 0;
 				}
 			}

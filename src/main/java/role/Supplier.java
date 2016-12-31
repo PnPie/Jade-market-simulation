@@ -1,3 +1,5 @@
+package role;
+
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -12,13 +14,13 @@ import java.util.Map;
 
 public class Supplier extends Agent {
 
-    private static final int privateLineCost = 240;
+    private final int privateLineCost = 240;
     private int electricityPrice = (int) Math.random() * 10 + 10;  // per kWh
-    private int transportCost = 2;  // per kWh
+    private int publicTransportCost = 2;  // per kWh
     private int otherCost;
     private int privateLineNumber;
     private int privateLineNumberInUse;
-    private Map<AID, Integer> clientTransport = new HashMap<AID, Integer>();
+    private Map<AID, Integer> clientPublicTransport = new HashMap<AID, Integer>();
     private Map<AID, Integer> clientPrivateLine = new HashMap<AID, Integer>();
 
 
@@ -52,19 +54,20 @@ public class Supplier extends Agent {
     }
 
     /**
-     * Waiting for agents to subscribe, and decide to use public transport or to construct a private one,
+     * Waiting for agents to subscribe, and decide to use
+     * public transport or to construct a private one,
      * and also deal with the cancel demand of a subscriber.
      *
      * @author yu
      */
     private class WaitForSubscription extends CyclicBehaviour {
 
-        private static final long serialVersionUID = 1L;
         private MessageTemplate mt;
 
         private WaitForSubscription(Agent a) {
             super(a);
-            mt = MessageTemplate.or(MessageTemplate.MatchConversationId("sub"), MessageTemplate.MatchConversationId("quit"));
+            mt = MessageTemplate.or(MessageTemplate.MatchConversationId("sub"),
+                    MessageTemplate.MatchConversationId("quit"));
         }
 
         @Override
@@ -75,16 +78,14 @@ public class Supplier extends Agent {
                 ACLMessage reply = msg.createReply();
                 if (msg.getPerformative() == ACLMessage.CFP) {
                     if (content.indexOf("PriceRequest") != -1) {
-                        //System.out.println(getLocalName() + ": receive a price request from " + msg.getSender().getLocalName() + ".");
                         reply.setPerformative(ACLMessage.PROPOSE);
                         reply.setContent(Integer.toString(electricityPrice));
                         myAgent.send(reply);
-                        //System.out.println(getLocalName() + ": send the price to " + msg.getSender().getLocalName() + ".");
                     }
                 } else if (msg.getPerformative() == ACLMessage.ACCEPT_PROPOSAL) {
                     int moyenne = Integer.parseInt(content);
-                    if (transportCost * moyenne * 12 <= privateLineCost)
-                        clientTransport.put(msg.getSender(), 0);
+                    if (publicTransportCost * moyenne * 12 <= privateLineCost)
+                        clientPublicTransport.put(msg.getSender(), 0);
                     else {
                         clientPrivateLine.put(msg.getSender(), 0);
                         if (privateLineNumberInUse < privateLineNumber) {
@@ -97,7 +98,7 @@ public class Supplier extends Agent {
                     }
 
                     System.out.print(getLocalName() + ": La liste actuelle des consommateurs: ");
-                    Iterator<AID> it = clientTransport.keySet().iterator();
+                    Iterator<AID> it = clientPublicTransport.keySet().iterator();
                     while (it.hasNext()) {
                         System.out.print(it.next().getLocalName() + " ");
                     }
@@ -108,8 +109,8 @@ public class Supplier extends Agent {
                     System.out.println();
 
                 } else if (msg.getPerformative() == ACLMessage.CANCEL) {
-                    if (clientTransport.containsKey(msg.getSender()))
-                        clientTransport.remove(msg.getSender());
+                    if (clientPublicTransport.containsKey(msg.getSender()))
+                        clientPublicTransport.remove(msg.getSender());
                     if (clientPrivateLine.containsKey(msg.getSender())) {
                         clientPrivateLine.remove(msg.getSender());
                         privateLineNumberInUse--;
@@ -143,10 +144,10 @@ public class Supplier extends Agent {
                 if (msg.getPerformative() == ACLMessage.REQUEST) {
                     String content = msg.getContent();
                     int cons = Integer.parseInt(content);
-                    if (clientTransport.containsKey(msg.getSender())) {
-                        int current = clientTransport.remove(msg.getSender());
-                        clientTransport.put(msg.getSender(), current + cons);
-                        System.out.println(getLocalName() + ": " + msg.getSender().getLocalName() + " " + clientTransport.get(msg.getSender()) + "KWh");
+                    if (clientPublicTransport.containsKey(msg.getSender())) {
+                        int current = clientPublicTransport.remove(msg.getSender());
+                        clientPublicTransport.put(msg.getSender(), current + cons);
+                        System.out.println(getLocalName() + ": " + msg.getSender().getLocalName() + " " + clientPublicTransport.get(msg.getSender()) + "KWh");
                     }
                     if (clientPrivateLine.containsKey(msg.getSender())) {
                         int current = clientPrivateLine.remove(msg.getSender());
@@ -193,9 +194,9 @@ public class Supplier extends Agent {
             ACLMessage msg = myAgent.receive(mt);
             if (msg != null && msg.getPerformative() == ACLMessage.REQUEST) {
                 ACLMessage reply = msg.createReply();
-                nomClient = clientTransport.size() + clientPrivateLine.size();
-                qteVendue = qteVendueCalcul(clientTransport) + qteVendueCalcul(clientPrivateLine);
-                fraisTransCom = transportCost * qteVendueCalcul(clientTransport);
+                nomClient = clientPublicTransport.size() + clientPrivateLine.size();
+                qteVendue = qteVendueCalcul(clientPublicTransport) + qteVendueCalcul(clientPrivateLine);
+                fraisTransCom = publicTransportCost * qteVendueCalcul(clientPublicTransport);
                 reply.setContent(getLocalName() + "," + nomClient + "," + qteVendue + "," + privateLineNumberInUse + "/" + privateLineNumber + "," + otherCost + "," + fraisTransCom + "," + electricityPrice * qteVendue + "," + (electricityPrice * qteVendue - otherCost - fraisTransCom));
                 reply.setPerformative(ACLMessage.INFORM);
                 myAgent.send(reply);

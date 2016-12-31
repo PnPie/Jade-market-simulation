@@ -3,6 +3,9 @@ import jade.core.ProfileImpl;
 import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.StaleProxyException;
+import role.Consumer;
+import role.Observer;
+import role.Supplier;
 
 public class SmartGrid {
 
