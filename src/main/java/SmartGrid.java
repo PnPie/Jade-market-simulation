@@ -29,18 +29,18 @@ public class SmartGrid {
      * add agent to the main container
      * @param mc
      * @param agentName
-     * @param classObject
+     * @param className
      * @throws StaleProxyException
      */
-    private void addAgent(AgentContainer mc, String agentName, Class classObject)
+    private void addAgent(AgentContainer mc, String agentName, String className)
             throws StaleProxyException {
-        mc.createNewAgent(agentName, classObject.getName(), new Object[0]).start();
+        mc.createNewAgent(agentName, className, new Object[0]).start();
     }
 
 
     public static void main(String[] args) throws StaleProxyException {
-        final int supplierNum = 4;
-        final int consumerNum = 10;
+        final int supplierNum = 2;
+        final int consumerNum = 4;
 
         SmartGrid smartGrid = new SmartGrid();
 
@@ -48,9 +48,9 @@ public class SmartGrid {
 
         // create different agents in the main container
         for (int i = 0; i < supplierNum; i++)
-            smartGrid.addAgent(mc, "Supplier-" + i, Supplier.class);
+            smartGrid.addAgent(mc, "Supplier-" + i, Supplier.class.getName());
         for (int i = 0; i < consumerNum; i++)
-            smartGrid.addAgent(mc, "Consumer-" + i, Consumer.class);
-        smartGrid.addAgent(mc, "Observer", Observer.class);
+            smartGrid.addAgent(mc, "Consumer-" + i, Consumer.class.getName());
+        smartGrid.addAgent(mc, "Observer", Observer.class.getName());
     }
 }
