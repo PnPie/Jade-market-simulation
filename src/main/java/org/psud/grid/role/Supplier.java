@@ -1,4 +1,4 @@
-package role;
+package org.psud.grid.role;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -6,7 +6,7 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import util.Registration;
+import org.psud.grid.util.Registration;
 
 import java.util.*;
 

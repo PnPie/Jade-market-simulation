@@ -1,4 +1,4 @@
-package role;
+package org.psud.grid.role;
 
 import jade.core.AID;
 import jade.core.Agent;
@@ -9,7 +9,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import util.Registration;
+import org.psud.grid.util.Registration;
 
 public class Consumer extends Agent {
 

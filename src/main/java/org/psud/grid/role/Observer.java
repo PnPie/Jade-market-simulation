@@ -1,4 +1,4 @@
-package role;
+package org.psud.grid.role;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -8,12 +8,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import util.Registration;
-
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.Vector;
+import org.psud.grid.util.Registration;
 
 /**
  * An interface to show all the related information of every supplier

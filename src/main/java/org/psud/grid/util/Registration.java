@@ -1,4 +1,4 @@
-package util;
+package org.psud.grid.util;
 
 import jade.core.AID;
 import jade.core.Agent;
